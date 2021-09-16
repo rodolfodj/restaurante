@@ -23,7 +23,6 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public OrderConfimationDto registerOrder(@RequestBody @Valid OrderDto body) {
-
         Long id = service.addNewOrder(body);
         return new OrderConfimationDto(id, StatusEnum.CONFIRMED);
 
@@ -31,7 +30,6 @@ public class OrderController {
 
     @GetMapping
     public List<OrderDto> getOrders() {
-
         return service.getOrders();
     }
 
