@@ -17,7 +17,7 @@ public class NotificationService {
 
     public void sendMessage(Order order) {
         rabbitTemplate.convertAndSend(RabbitConfiguration.EXCHANGE_NAME,
-                RabbitConfiguration.NOTIFICATION_QUEUE,
+                RabbitConfiguration.NOTIFICATION_KEY,
                 new NotificationMessage(order));
 
     }

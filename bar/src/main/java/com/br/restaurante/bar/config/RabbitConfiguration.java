@@ -1,6 +1,5 @@
-package com.br.restaurante.order.config;
+package com.br.restaurante.bar.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -14,16 +13,10 @@ public class RabbitConfiguration {
 
     public static final String EXCHANGE_NAME = "order-exchange";
 
-    public static final String NOTIFICATION_QUEUE = "order-notification-queue";
     public static final String ORDER_BAR_QUEUE = "order-bar-queue";
-    public static final String ORDER_KITCHEN_QUEUE = "order-kitchen-queue";
     public static final String BAR_ORDER_QUEUE = "bar-order-queue";
-    public static final String KITCHEN_ORDER_QUEUE = "kitchen-order-queue";
 
-    public static final String NOTIFICATION_KEY = "order-notification";
     public static final String ORDER_BAR_KEY = "order-bar";
-    public static final String ORDER_KITCHEN_KEY = "order-kitchen";
-    public static final String KITCHEN_ORDER_KEY = "kitchen-order";
     public static final String BAR_ORDER_KEY = "bar-order";
 
 
@@ -42,26 +35,8 @@ public class RabbitConfiguration {
 
 
     @Bean
-    public Queue declareOrderKitchenQueue() {
-        return QueueBuilder.durable(ORDER_KITCHEN_QUEUE)
-                .build();
-    }
-
-    @Bean
     public Queue declareBarOrderQueue() {
         return QueueBuilder.durable(BAR_ORDER_QUEUE)
-                .build();
-    }
-
-    @Bean
-    public Queue declareKitchenOrderQueue() {
-        return QueueBuilder.durable(KITCHEN_ORDER_QUEUE)
-                .build();
-    }
-
-    @Bean
-    public Queue declareNotificationQueue() {
-        return QueueBuilder.durable(NOTIFICATION_QUEUE)
                 .build();
     }
 
@@ -74,34 +49,10 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public Binding declareBindingOrderKitchen(Exchange exchange) {
-        return BindingBuilder.bind(declareOrderKitchenQueue())
-                .to(exchange)
-                .with(ORDER_KITCHEN_KEY)
-                .noargs();
-    }
-
-    @Bean
     public Binding declareBindingBarOrder(Exchange exchange) {
         return BindingBuilder.bind(declareBarOrderQueue())
                 .to(exchange)
                 .with(BAR_ORDER_KEY)
-                .noargs();
-    }
-
-    @Bean
-    public Binding declareBindingKitchenOrder(Exchange exchange) {
-        return BindingBuilder.bind(declareKitchenOrderQueue())
-                .to(exchange)
-                .with(KITCHEN_ORDER_KEY)
-                .noargs();
-    }
-
-    @Bean
-    public Binding declareBindingNotification(Exchange exchange) {
-        return BindingBuilder.bind(declareNotificationQueue())
-                .to(exchange)
-                .with(NOTIFICATION_KEY)
                 .noargs();
     }
 
@@ -115,10 +66,8 @@ public class RabbitConfiguration {
 
     @Bean
     public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
-        ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .findAndRegisterModules();
-        return new Jackson2JsonMessageConverter(mapper);
+        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
 }

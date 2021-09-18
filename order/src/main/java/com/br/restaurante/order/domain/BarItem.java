@@ -18,6 +18,7 @@ public class BarItem extends Item {
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 
+    @JsonIgnore
     @Override
     public TipoItemEnum getType() {
         return TipoItemEnum.BAR;

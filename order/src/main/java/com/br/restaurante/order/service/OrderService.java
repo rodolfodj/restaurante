@@ -53,7 +53,7 @@ public class OrderService {
         return order.getId();
     }
 
-    @Cacheable(cacheNames = "orders", key = "#root.method.name")
+    @Cacheable(cacheNames = "orders", key = "#root.method.name", unless = "#result.size < 1")
     public List<OrderDto> getOrders() {
         List<Order> all = repository.findAll();
         return all.stream().map(order -> {
