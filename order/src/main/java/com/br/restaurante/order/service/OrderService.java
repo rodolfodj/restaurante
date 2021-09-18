@@ -19,12 +19,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.br.restaurante.order.domain.StatusEnum.DONE;
+
 @Service
 @AllArgsConstructor
 public class OrderService {
 
     private OrderRepository repository;
     private RabbitTemplate rabbitTemplate;
+    private NotificationService notificationService;
 
     public Long addNewOrder(OrderDto orderDto) {
 
@@ -44,17 +47,10 @@ public class OrderService {
         }).forEach(order::adicionarNovoKitchenItem);
 
         repository.save(order);
-
-        Long orderId = order.getId();
-        rabbitTemplate.convertAndSend(RabbitConfiguration.EXCHANGE_NAME,
-                RabbitConfiguration.ORDER_BAR_KEY,
-                new BarRequestMessage(order.getBarItems(), orderId.toString()));
-        rabbitTemplate.convertAndSend(RabbitConfiguration.EXCHANGE_NAME,
-                RabbitConfiguration.ORDER_KITCHEN_KEY,
-                new KitchenRequestMessage(order.getKitchenItems(), orderId.toString()));
+        sendOrderToBar(order);
+        sendOrderToKitchen(order);
 
         return order.getId();
-
     }
 
     @Cacheable(cacheNames = "orders", key = "#root.method.name")
@@ -68,5 +64,34 @@ public class OrderService {
             orderDto.setKitchenItens(order.getKitchenItems().stream().filter(o -> o.getType().equals(TipoItemEnum.KITCHEN)).map(ItemDto::new).collect(Collectors.toList()));
             return orderDto;
         }).collect(Collectors.toList());
+    }
+
+    public void updateOrderStatus(Long orderNumber, TipoItemEnum type) {
+
+        repository.findById(orderNumber).ifPresent(o -> {
+            o.done(type);
+            boolean statusBar = DONE.equals(o.getStatusBar());
+            boolean kitchen = DONE.equals(o.getStatusKitchen());
+
+            repository.save(o);
+
+            if (statusBar && kitchen) this.notificationService.sendMessage(o);
+
+        });
+
+    }
+
+    private void sendOrderToBar(Order order) {
+        Long orderId = order.getId();
+        rabbitTemplate.convertAndSend(RabbitConfiguration.EXCHANGE_NAME,
+                RabbitConfiguration.ORDER_BAR_KEY,
+                new BarRequestMessage(order.getBarItems(), orderId.toString()));
+    }
+
+    private void sendOrderToKitchen(Order order) {
+        Long orderId = order.getId();
+        rabbitTemplate.convertAndSend(RabbitConfiguration.EXCHANGE_NAME,
+                RabbitConfiguration.ORDER_KITCHEN_KEY,
+                new KitchenRequestMessage(order.getKitchenItems(), orderId.toString()));
     }
 }

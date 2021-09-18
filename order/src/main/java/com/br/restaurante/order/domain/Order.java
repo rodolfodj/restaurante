@@ -61,4 +61,12 @@ public class Order implements Serializable {
         kitchenItems.add(novoItem);
         novoItem.setOrder(this);
     }
+
+    public void done(TipoItemEnum type) {
+        if (type.equals(TipoItemEnum.BAR)) {
+            this.statusBar = StatusEnum.DONE;
+        } else {
+            this.statusKitchen = StatusEnum.DONE;
+        }
+    }
 }
