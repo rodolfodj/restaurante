@@ -10,8 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 public class KitchenRequestMessage {
 
-    List<KitchenItem> items;
+    private List<KitchenItem> items;
 
-    String orderId;
+    private String orderId;
 
 }
