@@ -16,10 +16,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.br.restaurante.order.domain.StatusEnum.DONE;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +32,7 @@ public class OrderService {
 
         Order order = new Order();
         BeanUtils.copyProperties(orderDto, order);
+        order.setCreatedAt(LocalDateTime.now());
         order.setTableNo(orderDto.getTable());
 
         orderDto.getBarItens().stream().map(it -> {
@@ -69,14 +69,14 @@ public class OrderService {
     public void updateOrderStatus(Long orderNumber, TipoItemEnum type) {
 
         repository.findById(orderNumber).ifPresent(o -> {
-            o.done(type);
-            boolean statusBar = DONE.equals(o.getStatusBar());
-            boolean kitchen = DONE.equals(o.getStatusKitchen());
 
-            repository.save(o);
+            if (!o.isDone()) {
+                o.done(type);
+                o.setLastUpdateAt(LocalDateTime.now());
+                repository.save(o);
 
-            if (statusBar && kitchen) this.notificationService.sendMessage(o);
-
+                if (o.isDone()) this.notificationService.sendMessage(o);
+            }
         });
 
     }

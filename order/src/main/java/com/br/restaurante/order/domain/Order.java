@@ -6,8 +6,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,11 @@ public class Order implements Serializable {
     @NotNull
     @Positive
     private Integer tableNo;
+
+    @PastOrPresent
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastUpdateAt;
 
     @OneToMany(mappedBy = "order",
             cascade = CascadeType.ALL)
@@ -60,6 +67,11 @@ public class Order implements Serializable {
 
         kitchenItems.add(novoItem);
         novoItem.setOrder(this);
+    }
+
+    public boolean isDone() {
+        return statusBar.equals(StatusEnum.DONE)
+                && statusKitchen.equals(StatusEnum.DONE);
     }
 
     public void done(TipoItemEnum type) {

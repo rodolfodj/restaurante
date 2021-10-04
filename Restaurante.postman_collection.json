@@ -1,0 +1,108 @@
+{
+  "info": {
+    "_postman_id": "55b7f97c-c32d-4033-8dc5-1471344fb376",
+    "name": "Restaurante",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "/order",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/order",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "order"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"waiter\": \"{{$randomFullName}}\",\n    \"table\": {{$randomInt}},\n    \"kitchenItens\": [\n        {\n            \"name\": \"{{$randomProductName}}\",\n            \"quantity\": {{$randomInt}},\n            \"note\": null\n        },\n        {\n            \"name\": \"{{$randomProduct}}\",\n            \"quantity\": {{$randomInt}},\n            \"note\": \"{{$randomCatchPhrase}}\"\n        }\n    ],\n    \"barItens\": [\n        {\n            \"name\": \"{{$randomProduct}}\",\n            \"quantity\": {{$randomInt}},\n            \"note\": \"{{$randomCatchPhrase}}\"\n        },\n        {\n            \"name\": \"Cerveja\",\n            \"quantity\": {{$randomInt}},\n            \"note\": \"{{$randomCatchPhrase}}\"\n        }\n    ],\n    \"statusBar\": \"PREPARING\",\n    \"statusKitchen\": \"PREPARING\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/order",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "order"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/bar-orders/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/bar-orders/:id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "bar-orders",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{$randomInt}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/kitchen-orders/:id",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/kitchen-orders/:id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "kitchen-orders",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{$randomInt}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
